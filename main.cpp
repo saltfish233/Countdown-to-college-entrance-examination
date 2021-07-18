@@ -1,6 +1,8 @@
 #include<iostream>
 #include<time.h>
 #include<windows.h>
+#include<conio.h>
+#include<thread>
 
 using namespace std;
 
@@ -25,14 +27,14 @@ class TIME {
 public:
 	TIME()
 	{
-		t_main();
+		t_init();
 	}
 	void get_now_t()//获取当前时间
 	{
 		now_t = time(&now_t);
 		n_t = localtime(&now_t);
 		//n_t->tm_mon += 1;
-	}    
+	}
 	void get_gk_t() //定义高考时间
 	{
 		g_t = &t;
@@ -91,8 +93,8 @@ public:
 	}
 	void print_time() //输出高考时间
 	{
-			system("cls");
-			cout << "距离高考还有" << t_timing->days << "日" << t_timing->hours << "时" << t_timing->minutes << "分" << t_timing->seconds << "秒";
+		system("cls");
+		cout << "距离高考还有" << t_timing->days << "日" << t_timing->hours << "时" << t_timing->minutes << "分" << t_timing->seconds << "秒";
 	}
 	void t_init()
 	{
@@ -103,7 +105,6 @@ public:
 	}
 	void t_main()
 	{
-		t_init();
 		while (1) {
 			Sleep(1000);
 			get_now_t();
@@ -122,7 +123,7 @@ public:
 			return 0;
 		}
 	}
-	~TIME(){
+	~TIME() {
 		delete[] general_timing;
 		delete[] general_seconds;
 	}
@@ -133,12 +134,23 @@ private:
 	tm *g_t;
 	tm t;
 	struct timing timing;
-	struct timing *t_timing=&timing;
+	struct timing *t_timing = &timing;
 	int *general_seconds = new int[6]{ ordinary_year,month_seconds,day_seconds,hour_seconds,minute_seconds,second_seconds };
 	int **general_timing = new int*[6]{ &t_timing->years,&t_timing->months,&t_timing->days,&t_timing->hours,&t_timing->minutes,&t_timing->seconds };
 };
+void get_input()
+{
+	char input = getch();
+	switch (input) {
+	case 'q':
+		exit(0);
+	}
+}
 int main()
 {
 	TIME t;
+	thread get_q(get_input);
+	get_q.detach();
+	t.t_main();
 	return 0;
 }
